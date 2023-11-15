@@ -1,10 +1,10 @@
 package com.mungkeultrip;
-// import android.os.Bundle; // here
+import android.os.Bundle; // here
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
-// import org.devio.rn.splashscreen.SplashScreen; // here
+import org.devio.rn.splashscreen.SplashScreen; // here
 public class MainActivity extends ReactActivity {
 
   /**
@@ -15,11 +15,16 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "mungkeultrip";
   }
-  // @Override
-  // protected void onCreate(Bundle savedInstanceState) {
-  //     SplashScreen.show(this);  // here
-  //     super.onCreate(savedInstanceState);
-  // }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+      SplashScreen.show(this);  // here
+      super.onCreate(savedInstanceState);
+  }
+  @Override
+public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+    super.onReceivedError(view, errorCode, description, failingUrl);
+    view.loadUrl("about:blank");
+}
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
    * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React

@@ -13,7 +13,7 @@ import {
 import {name as appName} from './app.json';
 import Router from './src/router/Router';
 import SplashScreen from 'react-native-splash-screen';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {
   check,
   PERMISSIONS,
@@ -25,6 +25,10 @@ import {
 import messaging from '@react-native-firebase/messaging';
 import PushNotification, {Importance} from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import VersionCheck from 'react-native-version-check';
+import {Alert} from 'react-native';
+import {Linking} from 'react-native';
+
 interface TextWithDefaultProps extends Text {
   defaultProps?: {allowFontScaling?: boolean};
 }
@@ -49,6 +53,7 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 // Register background handler
 
 function App() {
+  // const [checkVersion, setChekcVersion] = useState(false);
   // firebase.initializeApp();
   useEffect(() => {
     try {
@@ -60,6 +65,93 @@ function App() {
       console.warn(e);
     }
   });
+
+  // const AppVersionCheck = async () => {
+  //   console.log('첫진입 시작');
+  //   //기기에 설치되 있는 버전
+  //   let CurrentVersion = VersionCheck.getCurrentVersion();
+  //   //앱의 최신버전
+  //   let LatestVersion = await VersionCheck.getLatestVersion();
+
+  //   console.log('CurrentVersion', CurrentVersion);
+  //   console.log('LatestVersion', LatestVersion);
+  //   //기기에 설치되있는 버전과 앱에 올려져있는 최신버전을 비교
+  //   VersionCheck.needUpdate({
+  //     currentVersion: CurrentVersion,
+  //     latestVersion: LatestVersion,
+  //   }).then((res: any) => {
+  //     if (res.isNeeded) {
+  //       Alert.alert(
+  //         '현재 최신버전이 아닙니다. 업데이트를 위해 스토어 페이지로 이동합니다.',
+  //         '',
+  //         [
+  //           {
+  //             text: '스토어이동',
+  //             onPress: () => {
+  //               if (Platform.OS == 'android') {
+  //                 VersionCheck.getStoreUrl({
+  //                   appID: 'com.mungkeultrip',
+  //                   packageName: 'com.mungkeultrip',
+  //                 }).then(e => Linking.openURL(res.storeUrl));
+  //                 // Linking.openURL(안드로이드 앱스토어 주소);
+  //               } else {
+  //                 VersionCheck.getAppStoreUrl({
+  //                   appID: 'com.mungkeultrip',
+  //                 }).then(e => Linking.openURL(res.storeUrl));
+  //                 // Linking.openURL(IOS 앱스토어 주소);
+  //               }
+  //             },
+  //           },
+  //         ],
+  //       );
+  //     }
+  //   });
+  // };
+  // useEffect(() => {
+  //   AppVersionCheck();
+  // }, []);
+  //권한 받기
+  // useEffect(() => {
+  //   if (Platform.OS == 'android') {
+  //     const granted = requestMultiple([
+  //       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+  //       PERMISSIONS.ANDROID.CAMERA,
+  //       PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+  //       PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+  //       PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
+  //     ]);
+  //   } else {
+  //     getRequestIosPermission();
+  //   }
+  // }, []);
+
+  // const getRequestIosPermission = async () => {
+  //   await requestMultiple([
+  //     PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  //     PERMISSIONS.IOS.LOCATION_ALWAYS,
+  //     PERMISSIONS.IOS.CAMERA,
+  //     PERMISSIONS.IOS.PHOTO_LIBRARY,
+  //     PERMISSIONS.IOS.MEDIA_LIBRARY,
+  //   ]).then(res => {
+  //     console.log('request result !!!!!!!!!!!! ', res);
+  //   });
+  //   await check(PERMISSIONS.IOS.CAMERA).then(res => {
+  //     console.log('res CAMERA =====>', res);
+  //   });
+  //   await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then(res => {
+  //     console.log('res LOCATION_WHEN_IN_USE =====>', res);
+  //   });
+  //   await check(PERMISSIONS.IOS.LOCATION_ALWAYS).then(res => {
+  //     console.log('res LOCATION_ALWAYS =====>', res);
+  //   });
+  //   await check(PERMISSIONS.IOS.PHOTO_LIBRARY).then(res => {
+  //     console.log('res PHOTO_LIBRARY =====>', res);
+  //   });
+  //   await check(PERMISSIONS.IOS.MEDIA_LIBRARY).then(res => {
+  //     console.log('res MEDIA_LIBRARY =====>', res);
+  //   });
+  //   // console.log('request result !!!!!!!!!!!! ');
+  // };
 
   const handleAppStateChange = () => {
     if (Platform.OS == 'ios') {
