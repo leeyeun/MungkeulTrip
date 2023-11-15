@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "149162887274",
+    "project_id": "mungkeul-trip",
+    "storage_bucket": "mungkeul-trip.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149162887274:android:4e90a379de0984e9586213",
+        "android_client_info": {
+          "package_name": "com.mungkeultrip"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPprzyJwLwe4m5IOBYd9-hPB6pQlyEWxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
