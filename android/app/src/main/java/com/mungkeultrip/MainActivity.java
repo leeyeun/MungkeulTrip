@@ -20,11 +20,7 @@ public class MainActivity extends ReactActivity {
       SplashScreen.show(this);  // here
       super.onCreate(savedInstanceState);
   }
-  @Override
-public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-    super.onReceivedError(view, errorCode, description, failingUrl);
-    view.loadUrl("about:blank");
-}
+
   /**
    * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
    * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React

@@ -111,47 +111,44 @@ function App() {
   //   AppVersionCheck();
   // }, []);
   //권한 받기
-  // useEffect(() => {
-  //   if (Platform.OS == 'android') {
-  //     const granted = requestMultiple([
-  //       PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-  //       PERMISSIONS.ANDROID.CAMERA,
-  //       PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
-  //       PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-  //       PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
-  //     ]);
-  //   } else {
-  //     getRequestIosPermission();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (Platform.OS == 'android') {
+      const granted = requestMultiple([
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        PERMISSIONS.ANDROID.CAMERA,
+        PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+        PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+        PERMISSIONS.ANDROID.POST_NOTIFICATIONS,
+      ]);
+    } else {
+      getRequestIosPermission();
+    }
+  }, []);
 
-  // const getRequestIosPermission = async () => {
-  //   await requestMultiple([
-  //     PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-  //     PERMISSIONS.IOS.LOCATION_ALWAYS,
-  //     PERMISSIONS.IOS.CAMERA,
-  //     PERMISSIONS.IOS.PHOTO_LIBRARY,
-  //     PERMISSIONS.IOS.MEDIA_LIBRARY,
-  //   ]).then(res => {
-  //     console.log('request result !!!!!!!!!!!! ', res);
-  //   });
-  //   await check(PERMISSIONS.IOS.CAMERA).then(res => {
-  //     console.log('res CAMERA =====>', res);
-  //   });
-  //   await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then(res => {
-  //     console.log('res LOCATION_WHEN_IN_USE =====>', res);
-  //   });
-  //   await check(PERMISSIONS.IOS.LOCATION_ALWAYS).then(res => {
-  //     console.log('res LOCATION_ALWAYS =====>', res);
-  //   });
-  //   await check(PERMISSIONS.IOS.PHOTO_LIBRARY).then(res => {
-  //     console.log('res PHOTO_LIBRARY =====>', res);
-  //   });
-  //   await check(PERMISSIONS.IOS.MEDIA_LIBRARY).then(res => {
-  //     console.log('res MEDIA_LIBRARY =====>', res);
-  //   });
-  //   // console.log('request result !!!!!!!!!!!! ');
-  // };
+  const getRequestIosPermission = async () => {
+    await requestMultiple([
+      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+      PERMISSIONS.IOS.LOCATION_ALWAYS,
+      PERMISSIONS.IOS.CAMERA,
+      PERMISSIONS.IOS.PHOTO_LIBRARY,
+    ]).then(res => {
+      console.log('request result !!!!!!!!!!!! ', res);
+    });
+    await check(PERMISSIONS.IOS.CAMERA).then(res => {
+      console.log('res CAMERA =====>', res);
+    });
+    await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then(res => {
+      console.log('res LOCATION_WHEN_IN_USE =====>', res);
+    });
+    await check(PERMISSIONS.IOS.LOCATION_ALWAYS).then(res => {
+      console.log('res LOCATION_ALWAYS =====>', res);
+    });
+    await check(PERMISSIONS.IOS.PHOTO_LIBRARY).then(res => {
+      console.log('res PHOTO_LIBRARY =====>', res);
+    });
+
+    // console.log('request result !!!!!!!!!!!! ');
+  };
 
   const handleAppStateChange = () => {
     if (Platform.OS == 'ios') {
