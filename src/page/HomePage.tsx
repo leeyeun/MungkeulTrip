@@ -8,6 +8,7 @@ import {
   Alert,
   BackHandler,
   Linking,
+  Text,
 } from 'react-native';
 import RNExitApp from 'react-native-exit-app';
 import {WebView} from 'react-native-webview';
@@ -24,11 +25,12 @@ const HomePage = props => {
   //웹작업 토큰이 회원테이블에 있으면 자동로그인 없으면 로그인 페이지로 작업
   const domain_url = 'https://lulu.dmonster.kr';
   const app_url = domain_url + '/';
-  const url = `${app_url}auth.php?chk_app=Y&app_token=`;
-  const indexurl = `${app_url}auth.php?chk_app=Y&app_token=${token}&chk_app=Y`;
-  const [webview_url, set_webview_url] = React.useState(url);
+  const url = `${app_url}auth.php?chk_app=Y&version=1.0&app_token=`;
+  const indexurl = `${app_url}auth.php?chk_app=Y&version=1.0&app_token=${token}&chk_app=Y`;
+  const [webview_url, set_webview_url] = React.useState(domain_url);
   const [cangoback, setCangoBack] = useState(false);
   const [iosSwiper, setIosSwiper] = useState(true);
+
   useEffect(() => {
     PushDatas();
   }, []);
@@ -37,13 +39,14 @@ const HomePage = props => {
     //포그라운드 노티 처리
     PushNotification.configure({
       onRegister: function (token) {
-        console.log('TOKEN:', token);
+        // console.log('TOKEN:', token);
       },
       onNotification: async function (notification) {
         const ttokenee = await messaging().getToken();
-        console.log('ttokenee', ttokenee);
+        // console.log('ttokenee', ttokenee);
         console.log('-------------클릭시 먹는 페이지-------------');
         console.log(notification);
+        set_webview_url(notification.data.intent);
         console.log('------------------------------------------');
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
@@ -63,6 +66,7 @@ const HomePage = props => {
       requestPermissions: true,
     });
   };
+
   React.useEffect(() => {
     //푸시 갯수 초기화
     PushNotification.setApplicationIconBadgeNumber(0);
@@ -100,10 +104,6 @@ const HomePage = props => {
         .then(token => {
           if (token) {
             setToken(token);
-            set_webview_url(
-              `${domain_url}/auth.php?chk_app=Y&app_token=${token}`,
-            );
-            console.log('token:::::', token);
             return true;
           } else {
             return false;
@@ -112,6 +112,7 @@ const HomePage = props => {
     }
     requestUserPermission();
   }, []);
+
   const onWebViewMessage = (webViewss: any) => {
     let jsonData = JSON.parse(webViewss.nativeEvent.data);
     console.log('jsonData', jsonData);
@@ -125,12 +126,23 @@ const HomePage = props => {
   const onNavigationStateChange = async (webViewState: any) => {
     console.log('webViewState ======> ', webViewState.url);
     setCangoBack(webViewState.canGoBack);
-    set_webview_url(webViewState.url);
-    if (webViewState.url == 'https://lulu.dmonster.kr/') {
+    // set_webview_url(webViewState.url);
+    if (webViewState.url == domain_url) {
       setIosSwiper(false);
     } else {
       setIosSwiper(true);
     }
+
+    if (
+      (!webViewState.url.includes(`${domain_url}?chk_app=Y&app_token=`) ||
+        !webViewState.url.includes('chk_app=Y&app_token=') ||
+        !webViewState.url.includes('kakao')) &&
+      webViewState.url != app_url &&
+      webViewState.url.includes(domain_url)
+    ) {
+      set_webview_url(webViewState.url);
+    }
+
     BackHandler.addEventListener('hardwareBackPress', handleBackButton);
   };
 
@@ -174,16 +186,17 @@ const HomePage = props => {
     }
   };
 
-  // useEffect(() => {
-  //   if (token != '') {
-  //     set_webview_url(`${domain_url}/auth.php?chk_app=Y&app_token=${token}`);
-  //   } else {
-  //     set_webview_url(`${domain_url}`);
-  //   }
-  // }, [token]);
+  useEffect(() => {
+    if (token != '') {
+      set_webview_url(
+        `${domain_url}/auth.php?chk_app=Y&version=1.0&app_token=${token}`,
+      );
+    } else {
+      set_webview_url(`${domain_url}`);
+    }
+  }, [token]);
 
   const snsLoginWithApple = async () => {
-    console.log('snsLoginWithApple');
     // performs login request
     const appleAuthRequestResponse = await appleAuth.performRequest({
       requestedOperation: appleAuth.Operation.LOGIN,
@@ -200,17 +213,16 @@ const HomePage = props => {
         appleAuthRequestResponse;
 
       if (fullName?.middleName == null) {
-        console.log('111111');
         set_webview_url(
           `${domain_url}/sns_login_apple_update.php?id_token=${identityToken}&user=${user}&name=${fullName?.familyName}${fullName?.givenName}`,
         );
       } else {
-        console.log('22222');
         set_webview_url(
           `${domain_url}/sns_login_apple_update.php?id_token=${identityToken}&user=${user}&name=${fullName?.givenName}${fullName?.middleName}${fullName?.familyName}`,
         );
       }
     } else {
+      Alert.alert('애플 로그인이 실패되었습니다.');
       console.log('애플 로그인 실패');
     }
   };
@@ -255,7 +267,7 @@ const HomePage = props => {
           userAgent={
             Platform.OS == 'ios'
               ? `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36 IOSAPP`
-              : 'Mozilla/5.0 (Linux; Android 8.0.0; SM-G935S Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Mobile Safari/537.36'
+              : ''
           }
         />
       </View>
