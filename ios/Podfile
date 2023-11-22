@@ -10,6 +10,7 @@ target 'mungkeultrip' do
   pod 'FirebaseCore', :modular_headers => true
   pod 'Firebase/Analytics'
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+  pod 'RNFBDynamicLinks', :path => '../node_modules/@react-native-firebase/dynamic-links'
   flags = get_default_flags()
 
   use_react_native!(

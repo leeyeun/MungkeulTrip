@@ -16,6 +16,8 @@ import messaging from '@react-native-firebase/messaging';
 import PushNotification, {Importance} from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
+import Share from 'react-native-share';
 
 const HomePage = props => {
   const {route, navigation} = props;
@@ -30,7 +32,7 @@ const HomePage = props => {
   const [webview_url, set_webview_url] = React.useState(domain_url);
   const [cangoback, setCangoBack] = useState(false);
   const [iosSwiper, setIosSwiper] = useState(true);
-
+  const [deeplink, setDeepLink] = useState('');
   const [intent, setIntent] = useState('');
 
   useEffect(() => {
@@ -125,9 +127,112 @@ const HomePage = props => {
       Linking.openURL(jsonData.url);
     } else if (jsonData.id == 'appleLogin') {
       snsLoginWithApple();
+    } else if (jsonData.id == 'share') {
+      onShare(jsonData.url, jsonData.title, jsonData.image);
     }
   };
 
+  //공유하기
+  const onShare = async (url: string, title: string, image: string) => {
+    console.log('url', url);
+    console.log(
+      '%%%%',
+      `https://mungkeultrip.page.link/detail?ft_idx=${url.split('=')[1]}`,
+    );
+    const link =
+      // Platform.OS === 'android'
+      await dynamicLinks().buildShortLink({
+        link: `https://mungkeultrip.page.link/detail?ft_idx=${
+          url.split('=')[1]
+        }`,
+        domainUriPrefix: 'https://mungkeultrip.page.link',
+        social: {
+          title: `${title}`,
+          descriptionText: '[뭉클트립]',
+          imageUrl: image,
+        },
+        android: {
+          packageName: 'com.mungkeultrip',
+        },
+        // navigation: {
+        //   forcedRedirectEnabled: true,
+        // },
+      });
+    Share.open({
+      message: `[뭉클트립] ${title} \n${link}`,
+    });
+  };
+
+  useEffect(() => {
+    const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    dynamicLinks()
+      .getInitialLink()
+      .then(link => {
+        if (link) {
+          if (Platform.OS == 'android') {
+            DeepLinkAndroid(link);
+          } else {
+            DiLinkUrl(decodeURIComponent(link));
+          }
+        }
+      });
+    return () => unsubscribe();
+  }, []);
+
+  const handleDynamicLink = link => {
+    if (link) {
+      if (Platform.OS == 'ios') {
+        //IOS 일때에 처리하기
+        DiLinkUrl(decodeURIComponent(link));
+      } else {
+        console.log('link=====>', link);
+        DeepLinkAndroid(link);
+      }
+    }
+  };
+
+  // 딥링크 ios
+  const DiLinkUrl = value => {
+    let valueUrl = decodeURIComponent(value);
+
+    const androidParams = valueUrl.url.split('?')[1];
+    const ft_idx = androidParams.replace('ft_idx=', '');
+    if (ft_idx) {
+      set_webview_url(`${domain_url}/detail.php?ft_idx=${ft_idx}`);
+    }
+  };
+
+  const [ftidx, setFtIdx] = useState('');
+  // // 딥링크 android
+  const DeepLinkAndroid = async value => {
+    setDeepLink(value.url);
+    console.log('value', value.url);
+    const androidParams = value.url.split('?')[1];
+    const ft_idx = androidParams.replace('ft_idx=', '');
+    console.log('ft_idx', ft_idx);
+    setFtIdx(androidParams.replace('ft_idx=', ''));
+    const fcmToken = await messaging().getToken();
+    if (ft_idx) {
+      // set_webview_url(`${domain_url}/detail.php?ft_idx=${ft_idx}`);
+      // set_webview_url(`${domain_url}/auth.php?chk_app=Y&pt_idx=${pt_idx}`);
+      // console.log('####pt_idx', pt_idx);
+      // console.log('####token', token);
+      // if (token == '' || token == undefined || token == null) {
+      //   console.log(
+      //     `${domain_url}/auth.php?chk_app=Y&app_token=${fcmToken}&pt_idx=${pt_idx}`,
+      //   );
+      //   // set_webview_url(`${domain_url}/auth.php?chk_app=Y&pt_idx=${pt_idx}`);
+      //   console.log('@11111');
+      //   set_webview_url(
+      //     `${domain_url}/auth.php?chk_app=Y&app_token=${fcmToken}&pt_idx=${pt_idx}`,
+      //   );
+      // } else {
+      // set_webview_url(
+      //   `${domain_url}/auth.php?chk_app=Y&app_token=${token}&pt_idx=${pt_idx}`,
+      // );
+      // }
+    }
+  };
   const onNavigationStateChange = async (webViewState: any) => {
     console.log('webViewState ======> ', webViewState.url);
     setCangoBack(webViewState.canGoBack);
@@ -183,7 +288,10 @@ const HomePage = props => {
         } else {
           console.log('2222');
           console.log('webview_url', webview_url);
-          if (webview_url.includes('my_notice_detail.php')) {
+          if (
+            webview_url.includes('my_notice_detail.php') ||
+            webview_url.includes('detail.php')
+          ) {
             set_webview_url(app_url);
           } else {
             set_webview_url(webview_url);
@@ -200,19 +308,26 @@ const HomePage = props => {
   };
 
   useEffect(() => {
-    if (token != '' && intent == '') {
+    console.log('ftidx', ftidx);
+    console.log('intent', intent);
+    console.log('token', token);
+    if (token != '' && intent == '' && ftidx == '') {
       console.log('intent111');
+      console.log('token', token);
       set_webview_url(
         `${domain_url}/auth.php?chk_app=Y&version=1.0&app_token=${token}`,
       );
-    } else if (intent !== '' && token !== '') {
+    } else if (intent !== '' && token !== '' && ftidx == '') {
       console.log('intent222');
       set_webview_url(intent);
+    } else if (intent == '' && ftidx != '' && token != '') {
+      console.log('!!!');
+      set_webview_url(`${domain_url}/detail.php?ft_idx=${ftidx}`);
     } else {
       console.log('intent333');
       set_webview_url(`${domain_url}`);
     }
-  }, [token, intent]);
+  }, [token, intent, ftidx]);
 
   const snsLoginWithApple = async () => {
     // performs login request
