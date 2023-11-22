@@ -31,6 +31,8 @@ const HomePage = props => {
   const [cangoback, setCangoBack] = useState(false);
   const [iosSwiper, setIosSwiper] = useState(true);
 
+  const [intent, setIntent] = useState('');
+
   useEffect(() => {
     PushDatas();
   }, []);
@@ -46,7 +48,8 @@ const HomePage = props => {
         // console.log('ttokenee', ttokenee);
         console.log('-------------클릭시 먹는 페이지-------------');
         console.log(notification);
-        set_webview_url(notification.data.intent);
+        setIntent(notification.data.intent);
+
         console.log('------------------------------------------');
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
@@ -118,6 +121,8 @@ const HomePage = props => {
     console.log('jsonData', jsonData);
     if (jsonData.id == 'pagemove') {
       Linking.openURL(jsonData.url);
+    } else if (jsonData.id == 'outLink') {
+      Linking.openURL(jsonData.url);
     } else if (jsonData.id == 'appleLogin') {
       snsLoginWithApple();
     }
@@ -173,9 +178,17 @@ const HomePage = props => {
         return true;
       } else {
         if (webViews.current && cangoback) {
+          console.log('11111');
           webViews.current.injectJavaScript('javascript:history.back();');
         } else {
-          set_webview_url(webview_url);
+          console.log('2222');
+          console.log('webview_url', webview_url);
+          if (webview_url.includes('my_notice_detail.php')) {
+            set_webview_url(app_url);
+          } else {
+            set_webview_url(webview_url);
+          }
+
           // set_webview_url(url + fcmToken);
         }
         // BackKeyApi(urls);
@@ -187,14 +200,19 @@ const HomePage = props => {
   };
 
   useEffect(() => {
-    if (token != '') {
+    if (token != '' && intent == '') {
+      console.log('intent111');
       set_webview_url(
         `${domain_url}/auth.php?chk_app=Y&version=1.0&app_token=${token}`,
       );
+    } else if (intent !== '' && token !== '') {
+      console.log('intent222');
+      set_webview_url(intent);
     } else {
+      console.log('intent333');
       set_webview_url(`${domain_url}`);
     }
-  }, [token]);
+  }, [token, intent]);
 
   const snsLoginWithApple = async () => {
     // performs login request
