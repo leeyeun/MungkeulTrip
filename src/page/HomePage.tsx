@@ -142,21 +142,24 @@ const HomePage = props => {
     const link =
       // Platform.OS === 'android'
       await dynamicLinks().buildShortLink({
-        link: `https://mungkeultrip.page.link/detail?ft_idx=${
-          url.split('=')[1]
-        }`,
+        link: url.includes('ft_idx')
+          ? `https://mungkeultrip.page.link/detail?ft_idx=${url.split('=')[1]}`
+          : `https://mungkeultrip.page.link/time_detail?tt_idx=${
+              url.split('=')[1]
+            }`,
         domainUriPrefix: 'https://mungkeultrip.page.link',
         social: {
-          title: `${title}`,
+          title: title,
           descriptionText: '[뭉클트립]',
           imageUrl: image,
         },
         android: {
           packageName: 'com.mungkeultrip',
         },
-        // navigation: {
-        //   forcedRedirectEnabled: true,
-        // },
+        ios: {
+          bundleId: 'com.honolulu.mungkeultrip',
+          appStoreId: '6472235149',
+        },
       });
     Share.open({
       message: `[뭉클트립] ${title} \n${link}`,
@@ -183,7 +186,7 @@ const HomePage = props => {
     if (link) {
       if (Platform.OS == 'ios') {
         //IOS 일때에 처리하기
-        DiLinkUrl(decodeURIComponent(link));
+        DiLinkUrl(decodeURIComponent(link?.url));
       } else {
         console.log('link=====>', link);
         DeepLinkAndroid(link);
@@ -195,44 +198,42 @@ const HomePage = props => {
   const DiLinkUrl = value => {
     let valueUrl = decodeURIComponent(value);
 
-    const androidParams = valueUrl.url.split('?')[1];
+    const androidParams = String(valueUrl).split('?')[1];
     const ft_idx = androidParams.replace('ft_idx=', '');
-    if (ft_idx) {
+    const tt_idx = androidParams.replace('tt_idx=', '');
+    if (ft_idx != '' && tt_idx == '') {
+      console.log('ft_idx', ft_idx);
       set_webview_url(`${domain_url}/detail.php?ft_idx=${ft_idx}`);
+    } else if (tt_idx !== '' && ft_idx == '') {
+      set_webview_url(`${domain_url}/time_detail.php?tt_idx=${tt_idx}`);
     }
   };
 
+  console.log('webview link ****', webview_url);
   const [ftidx, setFtIdx] = useState('');
   // // 딥링크 android
   const DeepLinkAndroid = async value => {
     setDeepLink(value.url);
     console.log('value', value.url);
     const androidParams = value.url.split('?')[1];
-    const ft_idx = androidParams.replace('ft_idx=', '');
-    console.log('ft_idx', ft_idx);
+    console.log('androidParams', androidParams);
+
+    if (value.url.includes('ft_idx')) {
+      console.log('ft_idx');
+      const ft_idx = androidParams.replace('ft_idx=', '');
+      console.log('ft_idx', ft_idx);
+      set_webview_url(`${domain_url}/detail.php?ft_idx=${ft_idx}`);
+    } else if (value.url.includes('tt_idx')) {
+      console.log('tt_idx');
+      const tt_idx = androidParams.replace('tt_idx=', '');
+      console.log('tt_idx', tt_idx);
+      set_webview_url(`${domain_url}/time_detail.php?tt_idx=${tt_idx}`);
+    }
+
     setFtIdx(androidParams.replace('ft_idx=', ''));
     const fcmToken = await messaging().getToken();
-    if (ft_idx) {
-      // set_webview_url(`${domain_url}/detail.php?ft_idx=${ft_idx}`);
-      // set_webview_url(`${domain_url}/auth.php?chk_app=Y&pt_idx=${pt_idx}`);
-      // console.log('####pt_idx', pt_idx);
-      // console.log('####token', token);
-      // if (token == '' || token == undefined || token == null) {
-      //   console.log(
-      //     `${domain_url}/auth.php?chk_app=Y&app_token=${fcmToken}&pt_idx=${pt_idx}`,
-      //   );
-      //   // set_webview_url(`${domain_url}/auth.php?chk_app=Y&pt_idx=${pt_idx}`);
-      //   console.log('@11111');
-      //   set_webview_url(
-      //     `${domain_url}/auth.php?chk_app=Y&app_token=${fcmToken}&pt_idx=${pt_idx}`,
-      //   );
-      // } else {
-      // set_webview_url(
-      //   `${domain_url}/auth.php?chk_app=Y&app_token=${token}&pt_idx=${pt_idx}`,
-      // );
-      // }
-    }
   };
+
   const onNavigationStateChange = async (webViewState: any) => {
     console.log('webViewState ======> ', webViewState.url);
     setCangoBack(webViewState.canGoBack);
@@ -243,6 +244,9 @@ const HomePage = props => {
       setIosSwiper(true);
     }
 
+    if (webViewState.url == app_url) {
+      set_webview_url(webViewState.url);
+    }
     if (
       (!webViewState.url.includes(`${domain_url}?chk_app=Y&app_token=`) ||
         !webViewState.url.includes('chk_app=Y&app_token=') ||
@@ -250,6 +254,7 @@ const HomePage = props => {
       webViewState.url != app_url &&
       webViewState.url.includes(domain_url)
     ) {
+      console.log('webViewState.url', webViewState.url);
       set_webview_url(webViewState.url);
     }
 
@@ -284,6 +289,10 @@ const HomePage = props => {
       } else {
         if (webViews.current && cangoback) {
           console.log('11111');
+          console.log('webViews.current', webViews.current);
+          console.log('cangoback', cangoback);
+          console.log('webview_url', webview_url);
+          // set_webview_url()
           webViews.current.injectJavaScript('javascript:history.back();');
         } else {
           console.log('2222');
@@ -308,26 +317,22 @@ const HomePage = props => {
   };
 
   useEffect(() => {
-    console.log('ftidx', ftidx);
     console.log('intent', intent);
     console.log('token', token);
-    if (token != '' && intent == '' && ftidx == '') {
+    if (token != '' && intent == '') {
       console.log('intent111');
       console.log('token', token);
       set_webview_url(
         `${domain_url}/auth.php?chk_app=Y&version=1.0&app_token=${token}`,
       );
-    } else if (intent !== '' && token !== '' && ftidx == '') {
+    } else if (intent !== '' && token !== '') {
       console.log('intent222');
       set_webview_url(intent);
-    } else if (intent == '' && ftidx != '' && token != '') {
-      console.log('!!!');
-      set_webview_url(`${domain_url}/detail.php?ft_idx=${ftidx}`);
     } else {
       console.log('intent333');
       set_webview_url(`${domain_url}`);
     }
-  }, [token, intent, ftidx]);
+  }, [token, intent]);
 
   const snsLoginWithApple = async () => {
     // performs login request
