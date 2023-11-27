@@ -228,15 +228,13 @@ const HomePage = props => {
   // 딥링크 ios
   const DiLinkUrl = value => {
     let valueUrl = decodeURIComponent(value);
-
-    const androidParams = String(valueUrl).split('?')[1];
-    const ft_idx = androidParams.replace('ft_idx=', '');
-    const tt_idx = androidParams.replace('tt_idx=', '');
+    console.log('valueUrl', valueUrl);
+    const iosParams = String(valueUrl).split('?')[1];
     if (valueUrl.includes('ft_idx')) {
-      const ft_idx = androidParams.replace('ft_idx=', '');
+      const ft_idx = iosParams.replace('ft_idx=', '');
       set_webview_url(`${domain_url}/detail.php?ft_idx=${ft_idx}`);
     } else if (valueUrl.includes('tt_idx')) {
-      const tt_idx = androidParams.replace('tt_idx=', '');
+      const tt_idx = iosParams.replace('tt_idx=', '');
       set_webview_url(`${domain_url}/time_detail.php?tt_idx=${tt_idx}`);
     } else if (valueUrl.includes('booking_list')) {
       set_webview_url(`${domain_url}/booking_list.php`);
@@ -398,7 +396,7 @@ const HomePage = props => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar animated={true} backgroundColor="#fff" />
-      <View style={{height: height}}>
+      <View style={{flex: 1, height: height}}>
         {isShowToast && (
           <ToastScreen
             title={toastMessage.title}
