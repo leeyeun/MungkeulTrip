@@ -42,6 +42,16 @@
 		<string>kakaotalk</string>
 		<string>kakao7eb5d7e4233f9ecc364e2be06cdc5522</string>
 	</array>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://mungkeultrip.page.link/board</string>
+		<string>https://mungkeultrip.page.link/post</string>
+		<string>https://mungkeultrip.page.link/board?bo_idx=</string>
+		<string>https://mungkeultrip.page.link/post?boidx=</string>
+		<string>https://mungkeultrip.page.link</string>
+		<string>com.mungkeultrip://google/link</string>
+		<string>mungkeultrip://google/link</string>
+	</array>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
 	<key>FirebaseAutomaticScreenReportingEnabled</key>
