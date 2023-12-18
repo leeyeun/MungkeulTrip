@@ -170,11 +170,18 @@ const HomePage = props => {
 
   //공유하기
   const onShare = async (url: string, title: string, image: string) => {
+    console.log('url', url);
+    let linkUrl = '';
+
     const link =
       // Platform.OS === 'android'
       await dynamicLinks().buildShortLink({
         link: url.includes('ft_idx')
           ? `https://moongcletrip.page.link/detail?ft_idx=${url.split('=')[1]}`
+          : url.includes('article_detail.php')
+          ? `https://moongcletrip.page.link/article_detail?idx=${
+              url.split('=')[1]
+            }`
           : `https://moongcletrip.page.link/time_detail?tt_idx=${
               url.split('=')[1]
             }`,
@@ -204,6 +211,7 @@ const HomePage = props => {
       .then(link => {
         if (link) {
           if (Platform.OS == 'android') {
+            console.log('DeepLink link', link);
             DeepLinkAndroid(link);
           } else {
             DiLinkUrl(decodeURIComponent(link));
@@ -238,12 +246,16 @@ const HomePage = props => {
       set_webview_url(`${domain_url}/time_detail.php?tt_idx=${tt_idx}`);
     } else if (valueUrl.includes('booking_list')) {
       set_webview_url(`${domain_url}/booking_list.php`);
+    } else if (value.url.includes('article_detail')) {
+      const idx = iosParams.replace('idx=', '');
+      set_webview_url(`${domain_url}/article_detail.php?idx=${idx}`);
     }
   };
 
   const [ftidx, setFtIdx] = useState('');
   // // 딥링크 android
   const DeepLinkAndroid = async value => {
+    console.log('value.url', value.url);
     setDeepLink(value.url);
     const androidParams = value.url.split('?')[1];
 
@@ -255,6 +267,9 @@ const HomePage = props => {
       set_webview_url(`${domain_url}/time_detail.php?tt_idx=${tt_idx}`);
     } else if (value.url.includes('booking_list')) {
       set_webview_url(`${domain_url}/booking_list.php`);
+    } else if (value.url.includes('article_detail')) {
+      const idx = androidParams.replace('idx=', '');
+      set_webview_url(`${domain_url}/article_detail.php?idx=${idx}`);
     }
 
     setFtIdx(androidParams.replace('ft_idx=', ''));
