@@ -246,7 +246,7 @@ const HomePage = props => {
       set_webview_url(`${domain_url}/time_detail.php?tt_idx=${tt_idx}`);
     } else if (valueUrl.includes('booking_list')) {
       set_webview_url(`${domain_url}/booking_list.php`);
-    } else if (value.url.includes('article_detail')) {
+    } else if (valueUrl.includes('article_detail')) {
       const idx = iosParams.replace('idx=', '');
       set_webview_url(`${domain_url}/article_detail.php?idx=${idx}`);
     }

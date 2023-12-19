@@ -11,7 +11,10 @@
 #import <ReactCommon/RCTTurboModuleManager.h>
 #import "RNFBMessagingModule.h"
 #import <React/RCTLinkingManager.h>
+
 @implementation AppDelegate
+
+
 
 //푸시관련 ----------------------------------------
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
@@ -80,7 +83,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
     }
   }];
 
-   [FIROptions defaultOptions].deepLinkURLScheme = @"com.mungkeultrip";
+   [FIROptions defaultOptions].deepLinkURLScheme = @"com.honolulu.mungkeultrip";
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                               moduleName:@"mungkeultrip"
@@ -109,6 +112,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   if ([RCTLinkingManager application:application openURL:url sourceApplication:nil annotation:nil]) {
     return YES;
   } 
+
 return YES;
 }
 

@@ -17,47 +17,55 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
+	<string>1.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>mungkeultrip</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>mungkeultrip</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>mungkeultrip</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>moongcletrip.page.link</string>
+			</array>
+		</dict>
 	</array>
-	<key>KAKAO_APP_KEY</key>
-	<string>7eb5d7e4233f9ecc364e2be06cdc5522</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>kakaokompassauth</string>
-		<string>storykompassauth</string>
-		<string>kakaotalk</string>
-		<string>kakao7eb5d7e4233f9ecc364e2be06cdc5522</string>
-	</array>
-	<key>FirebaseDynamicLinksCustomDomains</key>
-	<array>
-		<string>https://mungkeultrip.page.link/board</string>
-		<string>https://mungkeultrip.page.link/post</string>
-		<string>https://mungkeultrip.page.link/board?bo_idx=</string>
-		<string>https://mungkeultrip.page.link/post?boidx=</string>
-		<string>https://mungkeultrip.page.link</string>
-		<string>com.mungkeultrip://google/link</string>
-		<string>mungkeultrip://google/link</string>
-	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
 	<key>FirebaseAutomaticScreenReportingEnabled</key>
 	<false/>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+		<string>https://moongcletrip.page.link/detail</string>
+		<string>https://moongcletrip.page.link/detail?bo_idx=</string>
+		<string>https://moongcletrip.page.link</string>
+		<string>com.honolulu.mungkeultrip://google/link</string>
+		<string>moongcletrip://google/link</string>
+	</array>
 	<key>FirebaseScreenReportingEnabled</key>
 	<false/>
+	<key>KAKAO_APP_KEY</key>
+	<string>7eb5d7e4233f9ecc364e2be06cdc5522</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mungkeultrip</string>
+		<string>mungkeultrip.page.link</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -67,6 +75,8 @@
 			<key>localhost</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
 		</dict>

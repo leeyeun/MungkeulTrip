@@ -1,10 +1,8 @@
-$RNFirebaseAsStaticFramework = true
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
-use_frameworks!
 
 target 'mungkeultrip' do
   config = use_native_modules!
@@ -13,6 +11,7 @@ target 'mungkeultrip' do
   pod 'Firebase/Analytics'
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   pod 'RNFBDynamicLinks', :path => '../node_modules/@react-native-firebase/dynamic-links'
+  pod 'Firebase/DynamicLinks'
   flags = get_default_flags()
 
   use_react_native!(
